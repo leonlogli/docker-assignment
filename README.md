@@ -8,6 +8,9 @@ Dockerize BOTH apps - the Python and the Node app.
 ```bash
 # build python image
 docker build -t python-app ./python-app/.
+
+# build node image
+docker build -t node-app ./node-app/.
 ```
 
 2. Launch a container for each created image, making sure,
@@ -16,6 +19,9 @@ docker build -t python-app ./python-app/.
 ```bash
 # run python-app container with `it` flag because the app need pseudo terminal for input/output
 docker run -it python-app
+
+# run node-app in detached mode with -d flag to not block the terminal
+docker run -p 8080:3000 -d node-app
 ```
 
 3. Re-create both containers and assign names to both containers.
@@ -24,8 +30,16 @@ docker run -it python-app
 ```bash
 # run python-app container
 docker run -it --name python-app python-app
+
+# run node-app container
+docker run -p 8080:3000 -d --name node-app node-app
+
 # Stop containers
-docker stop python-app
+docker stop python-app node-app
+
+# Restart containers
+docker start -a -i python-app # allow interactive mode with pseudo terminal for input/output
+docker start node-app
 ```
 
 4. Clean up (remove) all stopped (and running) containers,
@@ -33,7 +47,7 @@ docker stop python-app
 
 ```bash
 # First stop containers
-docker stop python-app
+docker stop python-app node-app
 # Clean up all stopped containers
 docker container prune
 # clean up all created images
@@ -44,6 +58,7 @@ docker image prune
 
 ```bash
 docker build -t python-app:latest ./python-app/.
+docker build -t node-app:latest ./node-app/.
 ```
 
 6. Run new containers based on the re-built images, ensuring that the containers
@@ -52,4 +67,8 @@ docker build -t python-app:latest ./python-app/.
 ```bash
 # --rm flag remove the container on stop
 docker run -it --rm --name python-app python-app
+docker run --rm -p 8080:3000 -d --name node-app node-app
+
+# First stop containers to ensure they are removed
+docker stop python-app node-app
 ```
